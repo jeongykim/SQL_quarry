@@ -1,0 +1,57 @@
+pg.184
+CREATE TABLE NewBook(
+bookid INTEGER, 
+bookname VARCHAR(20),
+publisher VARCHAR(20),
+price INTEGER
+PRIMARY KEY(bookid)
+);
+
+CREATE TABLE NewBook(
+bookname VARCHAR(20),
+publisher VARCHAR(20),
+price INTEGER
+PRIMARY KEY (bookname, publisher)
+);
+
+CREATE TABLE NewBook(
+bookname VARCHAR(20) NOT NULL,
+publisher VARCHAR(20) UNIQUE,
+price INTEGER
+PRIMARY KEY (bookname, publisher)
+);
+
+CREATE TABLE Orders(
+orderid INTEGER PRIMARY KEY, 
+custid INTEGER,
+bookid INTEGER,
+salesprice INTEGER,
+orderdate DATE,
+FOREIGN KEY (custid) REFERENCES Customer (custid),
+FOREIGN KEY (bookid) REFERENCES Book (bookid)
+);
+
+pg.187
+CREATE TABLE NewBook(
+bookid INTEGER, 
+bookname VARCHAR(20),
+publisher VARCHAR(20),
+price INTEGER
+);
+
+CREATE TABLE NewBook(
+bookid INTEGER, 
+bookname VARCHAR(20),
+publisher VARCHAR(20),
+price INTEGER,
+isbn VARCHAR(13)
+);
+-> ALTER TABLE NewBook ADD isbn VARCHAR(13);
+
+pg.186 ALTER문
+ALTER TABLE NewBook modify isbn integer; -> integer로 바꾸기
+ALTER TABLE NewBook modify isbn VARCHAR(13); -> 도로 바꾸기
+ALTER TABLE NewBook modify isbn VARCHAR(20) NOT NULL;  -> NULL 없애기
+ALTER TABLE NewBook DROP COLUMN isbn; -> 특정 COLUMN 삭제하기
+ALTER TABLE NewBook ADD PRIMARY KEY(bookid); -> PRIMARY KEY
+DROP TABLE NewBook; -> NewBook 없애기

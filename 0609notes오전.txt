@@ -1,0 +1,34 @@
+pg.245
+다운 링크: https://www.kaggle.com/pavlofesenko/titanic-extended
+full.csv만 다운 -> titanic_full.csv로 이름 변경
+WikiId, Name_wiki, Age_wiki, 마지막Class 삭제
+
+CREATE database ch8_titanic;
+
+CREATE table titanic_full(
+PassengerId INTEGER, 
+Survived VARCHAR(2),
+Pclass INTEGER,
+Name VARCHAR(85),
+Sex VARCHAR(10),
+Age VARCHAR(10),
+SibSp INTEGER,
+Parch INTEGER,
+Ticket VARCHAR(20),
+Fare VARCHAR(20),
+Cabin VARCHAR(20),
+Embarked VARCHAR(2),
+Hometown VARCHAR(50),
+Boarded VARCHAR(15),
+Destination VARCHAR(40),
+Lifeboat VARCHAR(5),
+Body VARCHAR(15)
+);
+
+
+load data infile 'c:/full2.csv'
+into table titanic_full
+fields terminated by ','
+enclosed by '"'
+lines terminated by '\n'
+ignore 1 rows;

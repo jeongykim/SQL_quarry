@@ -1,0 +1,159 @@
+ SELECT @@GLOBAL.secure_file_priv;
+
+ CREATE table csv_test(
+    -> fam_name VARCHAR(2),
+    -> name VARCHAR(4),
+    -> grade INTEGER);
+
+load data infile 'c:/mysql/test.csv'
+into table csv_test
+fields terminated by ','
+enclosed by '"'
+lines terminated by '\n'
+ignore 1 rows;
+
+create table csv_seoul(
+hospitalName VARCHAR(20),
+address VARCHAR(100),
+phone VARCHAR(20));
+
+load data infile 'c:/mysql/서울특별시_관악구_의료기기판매업소_20210607.csv'
+into table csv_seoul
+fields terminated by ','
+enclosed by '"'
+lines terminated by '\n'
+ignore 1 rows;
+
+#############################################################333
+관리자 권한으로 mysql로그인 해서 database확인하기, 그리고 관리자 권한으로 하나 더 cmd창 열어서 거기에는 mysqldump 를 쳐서 사용한다.
+데이터 백업하기(mysql로그인 하지말고 관리자권한 프롬프트 한개 더 연다) (현재 백업을 하고 싶은 파일은 my_test_1)
+mysqldump -uroot -p1234 my_test_1 > c:\mysql\bin\dumptest_20210608.db
+                                                  c:\dumptest_20210608.db (경로 마음대로)
+백업데이터 사용하기(기존 my_test_1 copy본 만들기)
+create database my_test_1_copy; 
+만들면 이름만 만들어진 텅빈 내용의 my_test_1_copy가 만들어짐
+그리고 두번째 프롬프트로 가서
+mysql -uroot -p my_test_1_copy < c:\dumptest_20210608.db
+치고 비밀번호 입력하면 내용 그대로 my_test_1_copy가 만들어짐
+################################################
+원하는 csv 출력하기
+mysql.ini 에 secure-file-priv="C:/" 이렇게 원하는 경로를 쳐준다.
+그리고 mysql을 서비스로 들어가서 실행 중지했다가 다시 실행해준다.
+그리고 cmd창 들어가서 mysql 창 들어가서 create를 통해 csv담아놓을 틀을 만들고 밑에 명령문을 쳐준다.
+load data infile 'c:/test.csv' into table csv_test fields terminated by ','enclosed by '"' lines terminated by '\n' ignore 1 rows;
+이후 제대로 들어간 것을 확인할 수 있다.
+
+################################################
+pg.83~
+source c:/mysql/mysqlsampledatabase.sql
+show tables;
+desc orders;
+
+pg.87
+select A.orderdate, priceeach*quantityordered
+FROM orders A LEFT JOIN orderdetails B ON A.ordernumber=B.ordernumber;
+
+pg.88
+select A.orderdate, SUM(priceeach*quantityordered) AS sales
+FROM orders A LEFT JOIN orderdetails B ON A.ordernumber=B.ordernumber
+GROUP BY 1;
+
+pg.89, 90
+select SUBSTR('abcde', 2, 3);
+<MM월별로 뽑아내기>
+select SUBSTR(A.orderdate, 1, 7) MM, SUM(priceeach*quantityordered) AS sales
+FROM orders A LEFT JOIN orderdetails B
+ON A.ordernumber=B.ordernumber
+GROUP BY 1;
+<YY월별로 뽑아내기>
+select SUBSTR(A.orderdate, 1, 4) YY, SUM(priceeach*quantityordered) AS sales
+FROM orders A LEFT JOIN orderdetails B
+ON A.ordernumber=B.ordernumber
+GROUP BY 1;
+
+select orderdate, customernumber, ordernumber from orders;
+
+select COUNT(ordernumber) N_ORDERS,
+COUNT(DISTINCT ordernumber) N_ORDERS_DISTINCT from orders;
+
+pg.93
+select orderdate, COUNT(DISTINCT customernumber) N_PURCHASER,
+COUNT(ordernumber) N_ORDERS
+from orders
+GROUP BY 1;
+
+pg.94
+select SUBSTR(A.orderdate, 1, 4) YY,
+COUNT(DISTINCT A.customernumber ) N_PURCHASER,
+SUM(priceeach*quantityordered) AS sales
+FROM orders A
+LEFT JOIN orderdetails B
+ON A.ordernumber=B.ordernumber
+GROUP BY 1;
+
+select SUBSTR(A.orderdate, 1, 4) YY,
+COUNT(DISTINCT A.customernumber ) N_PURCHASER,
+SUM(priceeach*quantityordered) AS sales,
+SUM(priceeach*quantityordered)/COUNT(DISTINCT A.customernumber ) AMV 
+FROM orders A
+LEFT JOIN orderdetails B
+ON A.ordernumber=B.ordernumber
+GROUP BY 1;
+
+pg.67 data
+create database ch5_clothing;
+use ch5_clothing;
+
+load data infile 'c:/mysql/Womens Clothing E-Commerce Reviews.csv'
+into table dataset2
+fields terminated by ','
+enclosed by '"'
+lines terminated by '\n'
+ignore 1 rows;
+
+create table dataset2(
+SN INTEGER,
+Clothing_ID INTEGER,
+Age INTEGER,
+Title VARCHAR(55),
+Review_Text VARCHAR(510),
+Rating INTEGER,
+Recommended_IND INTEGER,
+Positive_Feedback_Count INTEGER,
+Division_Name VARCHAR(20),
+Department_Name VARCHAR(10),
+Class_Name VARCHAR(20)
+);
+
+pg.127
+select Division_Name, AVG(Rating) AVG_RATE
+from dataset2
+GROUP BY 1;
+
+select Division_Name, AVG(Rating) AVG_RATE
+from dataset2
+GROUP BY 1
+ORDER BY 2 DESC;
+
+select Department_Name, AVG(Rating) AVG_RATE
+from dataset2
+GROUP BY 1
+ORDER BY 2 DESC;
+
+pg.128
+c) department가 trend의 평점 3점 이하 리뷰
+select substr(Review_Text,1,100) from dataset2 
+where Rating <= 3 and Department_Name = 'trend';
+
+select substr(Review_Text,1,100) from dataset2 
+where Rating <= 3 and Department_Name = 'trend' and Review_Text like "%size%";
+
+select substr(Review_Text,1,100) from dataset2 
+where Rating > 3 and Department_Name = 'trend' and Review_Text like "%size%";
+
+select COUNT(*) from dataset2
+where Rating <= dna Department_Name='trned'and Review_Text LIKE "%size%";
+
+select COUNT(*) from dataset2
+where Ratings>3 and Department_Name='trend' and Review_Text LIKE '%size%'
+
